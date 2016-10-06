@@ -80,7 +80,7 @@ public class AlarmsListAdapter extends RecyclerView.Adapter<AlarmsListAdapter.Al
         }
 
         /**
-         * Formats input hour 7 minutes with 0 if any of them < 10
+         * Formats input hour & minutes with 0 if any of them < 10
          * @param alarm
          * @return String formattedTime
          */
