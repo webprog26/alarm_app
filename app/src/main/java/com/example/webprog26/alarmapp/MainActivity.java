@@ -1,5 +1,13 @@
 package com.example.webprog26.alarmapp;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.database.Cursor;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -9,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.webprog26.alarmapp.adapters.AlarmAdapter;
 import com.example.webprog26.alarmapp.adapters.AlarmsListAdapter;
 import com.example.webprog26.alarmapp.db.SQLiteHelper;
 import com.example.webprog26.alarmapp.interfaces.OnAlarmsListItemClickListener;
@@ -18,7 +27,7 @@ import com.example.webprog26.alarmapp.providers.AlarmProvider;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements TimeDialog.TimeCommunicator{
+public class MainActivity extends AppCompatActivity implements TimeDialog.TimeCommunicator, LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final String TAG = "AlarmAppMain";
 
@@ -27,8 +36,10 @@ public class MainActivity extends AppCompatActivity implements TimeDialog.TimeCo
 
     private SQLiteHelper mSqLiteHelper;
     private AlarmProvider mAlarmProvider;
-    private List<Alarm> mAlarmList;
-    private AlarmsListAdapter mAlarmsListAdapter;
+//    private List<Alarm> mAlarmList;
+//    private AlarmsListAdapter mAlarmsListAdapter;
+
+    public static final String DB_CHANGED_ACTION = "alarms_db_changed";
 
     //TimePickerDialog constants
     private static final String TIME_DIALOG_TAG = "timeDialog";
@@ -38,31 +49,36 @@ public class MainActivity extends AppCompatActivity implements TimeDialog.TimeCo
     private static final String ALARM_STATE_ACTIVE = "true";
     private static final String ALARM_STATE_NOT_ACTIVE = "false";
 
+    public static final int ALARMS_LOADER_ID = 101;
+
+    private AlarmAdapter mAlarmAdapter;
+    private LoadReceiver mLoadReceiver;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mLoadReceiver = new LoadReceiver();
+        registerReceiver(mLoadReceiver, new IntentFilter(DB_CHANGED_ACTION));
 
         mSqLiteHelper = new SQLiteHelper(this);
         mAlarmProvider = new AlarmProvider(this, mSqLiteHelper);
+        Cursor cursor = mAlarmProvider.getAllAlarmsInDB();
+        mAlarmAdapter = new AlarmAdapter(cursor, this, mAlarmProvider);
 
-        mAlarmList = mAlarmProvider.getAlarmList();
-
-        Log.i(TAG, "Alarms received from DB with AlarmProvider:\n");
-        for(Alarm alarm: mAlarmList)
-        {
-            Log.i(TAG, alarm.toString());
-        }
 
         mAlarmsRecyclerView = (RecyclerView) findViewById(R.id.alarmsRecyclerView);
-        mAlarmsListAdapter = new AlarmsListAdapter(this, mAlarmList, new OnAlarmsListItemClickListener() {
-            @Override
-            public void onAlarmsListItemClick(Alarm alarm) {
-                Log.i(TAG, "Clicked alarm: " + alarm.toString());
-            }
-        }, mAlarmProvider);
-        initAlarmsRecyclerView(mAlarmsRecyclerView, mAlarmsListAdapter);
+        mAlarmsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mAlarmsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mAlarmsRecyclerView.setAdapter(mAlarmAdapter);
+//        mAlarmsListAdapter = new AlarmsListAdapter(this, mAlarmList, new OnAlarmsListItemClickListener() {
+//  //          @Override
+//            public void onAlarmsListItemClick(Alarm alarm) {
+//                Log.i(TAG, "Clicked alarm: " + alarm.toString());
+//            }
+//        }, mAlarmProvider);
+//        initAlarmsRecyclerView(mAlarmsRecyclerView, mAlarmsListAdapter);
 
         mBtnAddAlarm = (Button) findViewById(R.id.btnAddAlarm);
         mBtnAddAlarm.setOnClickListener(new View.OnClickListener() {
@@ -72,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements TimeDialog.TimeCo
                 timeDialog.show(getSupportFragmentManager(), TIME_DIALOG_TAG);
             }
         });
+
+        getSupportLoaderManager().initLoader(ALARMS_LOADER_ID, null, this);
     }
 
     @Override
@@ -83,21 +101,77 @@ public class MainActivity extends AppCompatActivity implements TimeDialog.TimeCo
                                     minute,
                                     ALARM_STATE_ACTIVE);
             alarm.setAlarmId(mAlarmProvider.insertAlarmToDB(alarm));
-            mAlarmsListAdapter.addAlarmToAdapterList(alarm);
+            //mAlarmsListAdapter.addAlarmToAdapterList(alarm);
+
+            getSupportLoaderManager().getLoader(ALARMS_LOADER_ID).forceLoad();
             Log.i(TAG, alarm.toString());
         }
     }
 
-    /**
-     * Initializes RecyclerView with LayoutManager, ItemAnimator and adapter
-     * @param recyclerView
-     * @param adapter
-     */
-    private void initAlarmsRecyclerView(RecyclerView recyclerView, AlarmsListAdapter adapter)
-    {
+//    /**
+//     * Initializes RecyclerView with LayoutManager, ItemAnimator and adapter
+//     * @param recyclerView
+//     * @param adapter
+//     */
+//    private void initAlarmsRecyclerView(RecyclerView recyclerView, AlarmsListAdapter adapter)
+//    {
+//
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        recyclerView.setItemAnimator(new DefaultItemAnimator());
+//        recyclerView.setAdapter(adapter);
+//    }
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(adapter);
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new AlarmLoader(this, mAlarmProvider);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mAlarmAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
+
+    public class LoadReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction() == DB_CHANGED_ACTION)
+            {
+                getSupportLoaderManager().getLoader(ALARMS_LOADER_ID).forceLoad();
+                Log.i(TAG, "reseived broadcast " + intent.getAction());
+            }
+        }
+    }
+
+    public static class AlarmLoader extends CursorLoader {
+
+        private AlarmProvider mAlarmProvider;
+
+        public AlarmLoader(Context context, AlarmProvider alarmProvider) {
+            super(context);
+            this.mAlarmProvider = alarmProvider;
+        }
+
+        @Override
+        public Cursor loadInBackground() {
+            Cursor cursor = mAlarmProvider.getAllAlarmsInDB();
+            return cursor;
+        }
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mLoadReceiver != null)
+        {
+            unregisterReceiver(mLoadReceiver);
+            mLoadReceiver = null;
+        }
     }
 }

@@ -63,9 +63,9 @@ public class AlarmsListAdapter extends RecyclerView.Adapter<AlarmsListAdapter.Al
 
                     if(itemsRemoved == ALARM_DELETE_SUCCESS)
                     {
-                        Toast.makeText(mActivity, mActivity.getResources().getString(R.string.alard_deleted_success), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mActivity, mActivity.getResources().getString(R.string.alarm_removed_success), Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(mActivity, mActivity.getResources().getString(R.string.alarm_delete_failed), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mActivity, mActivity.getResources().getString(R.string.alarm_remove_failed), Toast.LENGTH_SHORT).show();
                     }
 
                 }

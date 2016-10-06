@@ -7,6 +7,6 @@
     <string name="mark">Mark</string>
     <string name="repeat">Repeat</string>
     <string name="vibration">Vibration</string>
-    <string name="alard_deleted_success">Alarm deleted successfully</string>
-    <string name="alarm_delete_failed">Alarm delete failed</string>
+    <string name="alarm_removed_success">Alarm deleted successfully</string>
+    <string name="alarm_remove_failed">Alarm delete failed</string>
 </resources>

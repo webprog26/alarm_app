@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.database.Cursor;
 
+import com.example.webprog26.alarmapp.MainActivity;
 import com.example.webprog26.alarmapp.db.SQLiteHelper;
 import com.example.webprog26.alarmapp.models.Alarm;
 
@@ -38,30 +39,35 @@ public class AlarmProvider {
         return mSqLiteHelper.getWritableDatabase().insert(SQLiteHelper.ALARMS_TABLE_TITLE, null, contentValues);
     }
 
-    /**
-     * Gets all the Alarms from DB
-     * @return List<Alarm> alarmList
-     */
-    public List<Alarm> getAlarmList()
+    public Cursor getAllAlarmsInDB()
     {
-        List<Alarm> alarmsList = new LinkedList<>();
-
-        Cursor cursor = mSqLiteHelper.getReadableDatabase().query(SQLiteHelper.ALARMS_TABLE_TITLE, null, null, null, null, null, SQLiteHelper.ALARM_ID);
-
-        while(cursor.moveToNext())
-        {
-            Alarm alarm = new Alarm(
-                            cursor.getLong(cursor.getColumnIndex(SQLiteHelper.ALARM_ID)),
-                            cursor.getInt(cursor.getColumnIndex(SQLiteHelper.ALARM_HOUR)),
-                            cursor.getInt(cursor.getColumnIndex(SQLiteHelper.ALARM_MINUTE)),
-                            cursor.getString(cursor.getColumnIndex(SQLiteHelper.IS_ALARM_ACTIVE))
-            );
-
-            alarmsList.add(alarm);
-        }
-
-        return alarmsList;
+        return mSqLiteHelper.getReadableDatabase().query(SQLiteHelper.ALARMS_TABLE_TITLE, null, null, null, null, null, SQLiteHelper.ALARM_ID);
     }
+
+//    /**
+//     * Gets all the Alarms from DB
+//     * @return List<Alarm> alarmList
+//     */
+//    public List<Alarm> getAlarmList()
+//    {
+//        List<Alarm> alarmsList = new LinkedList<>();
+//
+//        Cursor cursor = mSqLiteHelper.getReadableDatabase().query(SQLiteHelper.ALARMS_TABLE_TITLE, null, null, null, null, null, SQLiteHelper.ALARM_ID);
+//
+//        while(cursor.moveToNext())
+//        {
+//            Alarm alarm = new Alarm(
+//                            cursor.getLong(cursor.getColumnIndex(SQLiteHelper.ALARM_ID)),
+//                            cursor.getInt(cursor.getColumnIndex(SQLiteHelper.ALARM_HOUR)),
+//                            cursor.getInt(cursor.getColumnIndex(SQLiteHelper.ALARM_MINUTE)),
+//                            cursor.getString(cursor.getColumnIndex(SQLiteHelper.IS_ALARM_ACTIVE))
+//            );
+//
+//            alarmsList.add(alarm);
+//        }
+//
+//        return alarmsList;
+//    }
 
     /**
      * Deletes alarm with received alarmId from DB
@@ -70,6 +76,7 @@ public class AlarmProvider {
      */
     public int deleteAlarm(long alarmId)
     {
+
         return mSqLiteHelper.getWritableDatabase().delete(SQLiteHelper.ALARMS_TABLE_TITLE, SQLiteHelper.ALARM_ID + " = " + alarmId, null);
     }
 }
