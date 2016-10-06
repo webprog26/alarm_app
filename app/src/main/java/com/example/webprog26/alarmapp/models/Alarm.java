@@ -7,63 +7,51 @@ public class Alarm {
 
     private long mAlarmId;
     private int mHour;
-    private int mMinute;
-    private boolean mAlarmState;
-    private boolean mRepeatState;
-    private boolean mVibrationState;
-    private String mFileMelodyPath;
-    private String mFileMelodyTitle;
+    private int mMinutes;
+    private String mAlarmState;
 
-    public Alarm(int mHour, int mMinute, boolean mAlarmState, boolean mRepeatState, boolean mVibrationState, String mFileMelodyPath, String mFileMelodyTitle) {
+    public Alarm(int mHour, int mMinutes, String mAlarmState) {
         this.mHour = mHour;
-        this.mMinute = mMinute;
+        this.mMinutes = mMinutes;
         this.mAlarmState = mAlarmState;
-        this.mRepeatState = mRepeatState;
-        this.mVibrationState = mVibrationState;
-        this.mFileMelodyPath = mFileMelodyPath;
-        this.mFileMelodyTitle = mFileMelodyTitle;
     }
 
-    public Alarm(long mAlarmId, int mHour, int mMinute, boolean mAlarmState, boolean mRepeatState, boolean mVibrationState, String mFileMelodyPath, String mFileMelodyTitle) {
+    public Alarm(long mAlarmId, int mHour, int mMinutes, String mAlarmState) {
         this.mAlarmId = mAlarmId;
         this.mHour = mHour;
-        this.mMinute = mMinute;
+        this.mMinutes = mMinutes;
         this.mAlarmState = mAlarmState;
-        this.mRepeatState = mRepeatState;
-        this.mVibrationState = mVibrationState;
-        this.mFileMelodyPath = mFileMelodyPath;
-        this.mFileMelodyTitle = mFileMelodyTitle;
     }
 
-    public long getmAlarId() {
+    public void setAlarmId(long mAlarmId) {
+        this.mAlarmId = mAlarmId;
+    }
+
+    public long getAlarmId() {
         return mAlarmId;
     }
 
-    public int getAlarmHour() {
+    public int getHour() {
         return mHour;
     }
 
-    public int getAlarmMinute() {
-        return mMinute;
+    public int getMinutes() {
+        return mMinutes;
     }
 
-    public boolean isAlarmStateActive() {
+    public String getAlarmState() {
         return mAlarmState;
     }
 
-    public boolean isRepeatStateActive() {
-        return mRepeatState;
-    }
+    //Test method to ensure that Alarm is filled with data properly
 
-    public boolean isVibrationStateActive() {
-        return mVibrationState;
-    }
-
-    public String getFileMelodyPath() {
-        return mFileMelodyPath;
-    }
-
-    public String getFileMelodyTitle() {
-        return mFileMelodyTitle;
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("alarm id is " + getAlarmId() + "\n"
+                                      + "alarm hour is " + getHour() + "\n"
+                                      + "alarm minutes are " + getMinutes() + "\n"
+                                      + "current alarm state is " + getAlarmState());
+        return builder.toString();
     }
 }

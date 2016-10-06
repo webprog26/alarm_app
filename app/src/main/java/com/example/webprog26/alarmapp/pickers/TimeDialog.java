@@ -88,6 +88,10 @@ public class TimeDialog extends DialogFragment{
                 }).create();
     }
 
+    /**
+     * Checks is API level >= 23
+     * @return API level >= 23
+     */
     private boolean isApiOver23()
     {
         return Build.VERSION.SDK_INT >= 23;
