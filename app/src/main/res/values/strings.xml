@@ -9,4 +9,5 @@
     <string name="vibration">Vibration</string>
     <string name="alarm_removed_success">Alarm deleted successfully</string>
     <string name="alarm_remove_failed">Alarm delete failed</string>
+
 </resources>

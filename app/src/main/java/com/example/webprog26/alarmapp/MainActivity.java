@@ -18,14 +18,10 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.webprog26.alarmapp.adapters.AlarmAdapter;
-import com.example.webprog26.alarmapp.adapters.AlarmsListAdapter;
 import com.example.webprog26.alarmapp.db.SQLiteHelper;
-import com.example.webprog26.alarmapp.interfaces.OnAlarmsListItemClickListener;
 import com.example.webprog26.alarmapp.models.Alarm;
 import com.example.webprog26.alarmapp.pickers.TimeDialog;
 import com.example.webprog26.alarmapp.providers.AlarmProvider;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements TimeDialog.TimeCommunicator, LoaderManager.LoaderCallbacks<Cursor>{
 
@@ -36,8 +32,7 @@ public class MainActivity extends AppCompatActivity implements TimeDialog.TimeCo
 
     private SQLiteHelper mSqLiteHelper;
     private AlarmProvider mAlarmProvider;
-//    private List<Alarm> mAlarmList;
-//    private AlarmsListAdapter mAlarmsListAdapter;
+
 
     public static final String DB_CHANGED_ACTION = "alarms_db_changed";
 
@@ -48,6 +43,13 @@ public class MainActivity extends AppCompatActivity implements TimeDialog.TimeCo
     //Newly-created Alarm initialization constants
     private static final String ALARM_STATE_ACTIVE = "true";
     private static final String ALARM_STATE_NOT_ACTIVE = "false";
+    public static final String ALARM_REPEAT_STATE_ACTIVE = "true";
+    public static final String ALARM_REPEAT_STATE_NOT_ACTIVE = "false";
+    public static final String ALARM_VIBRATION_STATE_ACTIVE = "true";
+    public static final String ALARM_VIBRATION_STATE_NOT_ACTIVE = "false";
+    public static final String DAY_ACTIVE = "true";
+    public static final String DAY_NOT_ACTIVE = "false";
+
 
     public static final int ALARMS_LOADER_ID = 101;
 
@@ -72,13 +74,7 @@ public class MainActivity extends AppCompatActivity implements TimeDialog.TimeCo
         mAlarmsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAlarmsRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mAlarmsRecyclerView.setAdapter(mAlarmAdapter);
-//        mAlarmsListAdapter = new AlarmsListAdapter(this, mAlarmList, new OnAlarmsListItemClickListener() {
-//  //          @Override
-//            public void onAlarmsListItemClick(Alarm alarm) {
-//                Log.i(TAG, "Clicked alarm: " + alarm.toString());
-//            }
-//        }, mAlarmProvider);
-//        initAlarmsRecyclerView(mAlarmsRecyclerView, mAlarmsListAdapter);
+
 
         mBtnAddAlarm = (Button) findViewById(R.id.btnAddAlarm);
         mBtnAddAlarm.setOnClickListener(new View.OnClickListener() {
@@ -97,29 +93,28 @@ public class MainActivity extends AppCompatActivity implements TimeDialog.TimeCo
         if(requestCode == TIME_PICKER_REQUEST_CODE)
         {
             Log.i(TAG, "time: " + hour + ":" + minute);
-            Alarm alarm = new Alarm(hour,
-                                    minute,
-                                    ALARM_STATE_ACTIVE);
-            alarm.setAlarmId(mAlarmProvider.insertAlarmToDB(alarm));
-            //mAlarmsListAdapter.addAlarmToAdapterList(alarm);
+            Alarm.Builder builder = Alarm.newBuilder();
+                builder.setAlarmHour(hour)
+                        .setAlarmMinutes(minute)
+                        .setAlarmState(ALARM_STATE_ACTIVE)
+                        .setAlarmRepeatOn(ALARM_REPEAT_STATE_ACTIVE)
+                        .setVibrationStateOn(ALARM_VIBRATION_STATE_ACTIVE)
+                        .setMelodyFilePath("test_melody_path")
+                        .setMelodyFileTitle("test_melody_title")
+                        .setMOActiveState(DAY_ACTIVE)
+                        .setTUActiveState(DAY_ACTIVE)
+                        .setWEActiveState(DAY_ACTIVE)
+                        .setTHActiveState(DAY_ACTIVE)
+                        .setFRActiveState(DAY_ACTIVE)
+                        .setSAActiveState(DAY_ACTIVE)
+                        .setSUActiveState(DAY_ACTIVE);
+            Alarm alarm = builder.build();
+            mAlarmProvider.insertAlarmToDB(alarm);
 
             getSupportLoaderManager().getLoader(ALARMS_LOADER_ID).forceLoad();
             Log.i(TAG, alarm.toString());
         }
     }
-
-//    /**
-//     * Initializes RecyclerView with LayoutManager, ItemAnimator and adapter
-//     * @param recyclerView
-//     * @param adapter
-//     */
-//    private void initAlarmsRecyclerView(RecyclerView recyclerView, AlarmsListAdapter adapter)
-//    {
-//
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        recyclerView.setItemAnimator(new DefaultItemAnimator());
-//        recyclerView.setAdapter(adapter);
-//    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -128,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements TimeDialog.TimeCo
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.i(TAG, "Loading finished...");
         mAlarmAdapter.swapCursor(data);
     }
 
@@ -158,11 +154,16 @@ public class MainActivity extends AppCompatActivity implements TimeDialog.TimeCo
         }
 
         @Override
+        protected void onStartLoading() {
+            super.onStartLoading();
+            Log.i(TAG, "startLoading...");
+        }
+
+        @Override
         public Cursor loadInBackground() {
             Cursor cursor = mAlarmProvider.getAllAlarmsInDB();
             return cursor;
         }
-
     }
 
     @Override

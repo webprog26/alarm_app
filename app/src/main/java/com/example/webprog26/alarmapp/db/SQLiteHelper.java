@@ -15,7 +15,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     //DB tables titles
     public static final String ALARMS_TABLE_TITLE = "alarms_table";
-    public static final String DAYS_TABLE_TITLE = "days_table";
 
     //Alarms table columns
     public static final String ALARM_ID = "_id";
@@ -26,10 +25,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public static final String IS_VIBRATION_ON = "is_vibration_on";
     public static final String MELODY_FILE_PATH = "melody_file_path";
     public static final String MELODY_FILE_TITLE = "melody_file_title";
-
-    //Days table columns
-    public static final String DAY_ID = "_id";
-    public static final String CURRENT_ALARM_ID = "alarm_id";
     public static final String MO = "MO";
     public static final String TU = "TU";
     public static final String WE = "WE";
@@ -56,12 +51,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 + IS_REPEAT_ON + " varchar(10), "
                 + IS_VIBRATION_ON + " varchar(10), "
                 + MELODY_FILE_PATH + " varchar(100), "
-                + MELODY_FILE_TITLE + " varchar(100))");
-
-        //creating DAYS_TABLE
-        db.execSQL("create table " + DAYS_TABLE_TITLE + "("
-                + DAY_ID + " integer primary key autoincrement, "
-                + CURRENT_ALARM_ID + " integer, "
+                + MELODY_FILE_TITLE + " varchar(100), "
                 + MO + " varchar(10), "
                 + TU + " varchar(10), "
                 + WE + " varchar(10), "
@@ -69,9 +59,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 + FR + " varchar(10), "
                 + SA + " varchar(10), "
                 + SU + " varchar(10))");
+
     }
-
-
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

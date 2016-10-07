@@ -3,6 +3,7 @@ package com.example.webprog26.alarmapp.providers;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.example.webprog26.alarmapp.MainActivity;
 import com.example.webprog26.alarmapp.db.SQLiteHelper;
@@ -15,6 +16,8 @@ import java.util.List;
  * Created by webprog26 on 06.10.2016.
  */
 public class AlarmProvider {
+
+    private static final String TAG = "AlarmProvider";
 
     private Activity mActivity;
     private SQLiteHelper mSqLiteHelper;
@@ -35,6 +38,15 @@ public class AlarmProvider {
         contentValues.put(SQLiteHelper.ALARM_HOUR, alarm.getHour());
         contentValues.put(SQLiteHelper.ALARM_MINUTE, alarm.getMinutes());
         contentValues.put(SQLiteHelper.IS_ALARM_ACTIVE, alarm.getAlarmState());
+        contentValues.put(SQLiteHelper.IS_REPEAT_ON, alarm.getAlarmRepeatState());
+        contentValues.put(SQLiteHelper.IS_VIBRATION_ON, alarm.getAlarmVibrationOn());
+        contentValues.put(SQLiteHelper.MO, alarm.getMO());
+        contentValues.put(SQLiteHelper.TU, alarm.getTU());
+        contentValues.put(SQLiteHelper.WE, alarm.getWE());
+        contentValues.put(SQLiteHelper.TH, alarm.getTH());
+        contentValues.put(SQLiteHelper.FR, alarm.getFR());
+        contentValues.put(SQLiteHelper.SA, alarm.getSA());
+        contentValues.put(SQLiteHelper.SU, alarm.getSU());
 
         return mSqLiteHelper.getWritableDatabase().insert(SQLiteHelper.ALARMS_TABLE_TITLE, null, contentValues);
     }
@@ -68,6 +80,38 @@ public class AlarmProvider {
 //
 //        return alarmsList;
 //    }
+
+    public int updateAlarmActiveState(long alarmId, String alarmActiveState)
+    {
+        String strFilter = SQLiteHelper.ALARM_ID + " = " + alarmId;
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(SQLiteHelper.IS_ALARM_ACTIVE, alarmActiveState);
+
+        return mSqLiteHelper.getWritableDatabase().update(SQLiteHelper.ALARMS_TABLE_TITLE, contentValues, strFilter, null);
+    }
+
+    public int updateAlarmChbState(long alarmId, String columnName, String alarmRepeatState)
+    {
+        String strFilter = SQLiteHelper.ALARM_ID + " = " + alarmId;
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(columnName, alarmRepeatState);
+
+        return mSqLiteHelper.getWritableDatabase().update(SQLiteHelper.ALARMS_TABLE_TITLE, contentValues, strFilter, null);
+    }
+
+    public int updateDayActiveState(long alarmId, String dayColumnTitle, String dayActiveState)
+    {
+        Log.i(TAG, "in AlarmProvider alarm id is " + alarmId);
+
+        String strFilter = SQLiteHelper.ALARM_ID + " = " + alarmId;
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(dayColumnTitle, dayActiveState);
+
+        return mSqLiteHelper.getWritableDatabase().update(SQLiteHelper.ALARMS_TABLE_TITLE, contentValues, strFilter, null);
+
+    }
 
     /**
      * Deletes alarm with received alarmId from DB
