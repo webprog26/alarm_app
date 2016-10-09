@@ -113,11 +113,15 @@ public class AlarmAdapter extends CursorRecyclerAdapter<AlarmAdapter.AlarmViewHo
 
         final LinearLayout daysView = (LinearLayout) holder.itemView.findViewById(R.id.daysView);
 
+        LinearLayout smallDaysActiveListContainer = (LinearLayout) holder.itemView.findViewById(R.id.smallActiveDaysList);
+
         if(!holder.mChbAlarmRepeat.isChecked())
         {
             daysView.setVisibility(View.GONE);
+            smallDaysActiveListContainer.setVisibility(View.GONE);
         } else {
             daysView.setVisibility(View.VISIBLE);
+            smallDaysActiveListContainer.setVisibility(View.VISIBLE);
         }
 
         holder.mChbAlarmRepeat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -153,6 +157,14 @@ public class AlarmAdapter extends CursorRecyclerAdapter<AlarmAdapter.AlarmViewHo
         setUnderlineDecorationToActiveDay(Boolean.valueOf(holder.mTvFr.getTag().toString()), holder.mTvFr);
         setUnderlineDecorationToActiveDay(Boolean.valueOf(holder.mTvSa.getTag().toString()), holder.mTvSa);
         setUnderlineDecorationToActiveDay(Boolean.valueOf(holder.mTvSu.getTag().toString()), holder.mTvSu);
+
+        setSmallActiveDaysVisibility(Boolean.valueOf(holder.mTvMo.getTag().toString()), holder.sMmTvMo);
+        setSmallActiveDaysVisibility(Boolean.valueOf(holder.mTvTu.getTag().toString()), holder.sMmTvTu);
+        setSmallActiveDaysVisibility(Boolean.valueOf(holder.mTvWe.getTag().toString()), holder.sMmTvWe);
+        setSmallActiveDaysVisibility(Boolean.valueOf(holder.mTvTh.getTag().toString()), holder.sMmTvTh);
+        setSmallActiveDaysVisibility(Boolean.valueOf(holder.mTvFr.getTag().toString()), holder.sMmTvFr);
+        setSmallActiveDaysVisibility(Boolean.valueOf(holder.mTvSa.getTag().toString()), holder.sMmTvSa);
+        setSmallActiveDaysVisibility(Boolean.valueOf(holder.mTvSu.getTag().toString()), holder.sMmTvSu);
 
 //        Log.i(TAG, "Tag " + holder.mTvMo.getTag() + "\n");
 //        Log.i(TAG, "Tag " + holder.mTvTu.getTag() + "\n");
@@ -218,7 +230,25 @@ public class AlarmAdapter extends CursorRecyclerAdapter<AlarmAdapter.AlarmViewHo
             }
         });
 
+        final RelativeLayout bottomAlarmView = (RelativeLayout) holder.itemView.findViewById(R.id.bottomAlarmView);
 
+        holder.mBtnShowAlarmOptions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "Show Alarm Options button clicked!");
+                if(bottomAlarmView.getVisibility() == View.GONE)
+                    bottomAlarmView.setVisibility(View.VISIBLE);
+            }
+        });
+
+        holder.mBtnHideAlarmOptions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "Hide Alarm Options button clicked!");
+                if(bottomAlarmView.getVisibility() == View.VISIBLE)
+                    bottomAlarmView.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void disableEnableControls(boolean enable, ViewGroup vg){
@@ -268,20 +298,15 @@ public class AlarmAdapter extends CursorRecyclerAdapter<AlarmAdapter.AlarmViewHo
         }
     }
 
-//    @Override
-//    public void onBindViewHolder(AlarmViewHolder holder, int i) {
-//        super.onBindViewHolder(holder, i);
-//        mCursor.moveToPosition(i);
-//
-//        StringBuilder builder = new StringBuilder();
-//        builder.append(mCursor.getInt(mCursor.getColumnIndex(SQLiteHelper.ALARM_HOUR)));
-//        builder.append(":");
-//        builder.append(mCursor.getInt(mCursor.getColumnIndex(SQLiteHelper.ALARM_MINUTE)));
-//        holder.mTvAlarmTime.setText(builder.toString());
-//
-//        holder.mSwAlarmState.setChecked(Boolean.valueOf(mCursor.getString(mCursor.getColumnIndex(SQLiteHelper.IS_ALARM_ACTIVE))));
-//
-//    }
+    private void setSmallActiveDaysVisibility(boolean isActive, TextView textView)
+    {
+        if(isActive)
+        {
+            textView.setVisibility(View.VISIBLE);
+        } else {
+            textView.setVisibility(View.GONE);
+        }
+    }
 
     class AlarmViewHolder extends RecyclerView.ViewHolder{
 
@@ -290,8 +315,10 @@ public class AlarmAdapter extends CursorRecyclerAdapter<AlarmAdapter.AlarmViewHo
         private ImageButton mBtnDeleteAlarm;
         private CheckBox mChbAlarmRepeat, mChbAlarmVibration;
         private LinearLayout mMelodyChooser;
+        private ImageButton mBtnShowAlarmOptions, mBtnHideAlarmOptions;
 
         private TextView mTvMo, mTvTu, mTvWe, mTvTh, mTvFr, mTvSa, mTvSu;
+        private TextView sMmTvMo, sMmTvTu, sMmTvWe, sMmTvTh, sMmTvFr, sMmTvSa, sMmTvSu;
 
         public AlarmViewHolder(View itemView) {
             super(itemView);
@@ -302,6 +329,8 @@ public class AlarmAdapter extends CursorRecyclerAdapter<AlarmAdapter.AlarmViewHo
             mChbAlarmRepeat = (CheckBox) itemView.findViewById(R.id.chbRepeatAlarm);
             mChbAlarmVibration = (CheckBox) itemView.findViewById(R.id.chbVibrationOn);
             mMelodyChooser = (LinearLayout) itemView.findViewById(R.id.llMelodyChooser);
+            mBtnShowAlarmOptions = (ImageButton) itemView.findViewById(R.id.btnShowAlarmOptions);
+            mBtnHideAlarmOptions = (ImageButton) itemView.findViewById(R.id.btnHideAlarmOptions);
 
             mTvMo = (TextView) itemView.findViewById(R.id.tvMo);
             mTvTu = (TextView) itemView.findViewById(R.id.tvTu);
@@ -311,10 +340,24 @@ public class AlarmAdapter extends CursorRecyclerAdapter<AlarmAdapter.AlarmViewHo
             mTvSa = (TextView) itemView.findViewById(R.id.tvSa);
             mTvSu = (TextView) itemView.findViewById(R.id.tvSu);
 
+            sMmTvMo = (TextView) itemView.findViewById(R.id.sMtvMo);
+            sMmTvTu = (TextView) itemView.findViewById(R.id.sMtvTu);
+            sMmTvWe = (TextView) itemView.findViewById(R.id.sMtvWe);
+            sMmTvTh = (TextView) itemView.findViewById(R.id.sMtvTh);
+            sMmTvFr = (TextView) itemView.findViewById(R.id.sMtvFr);
+            sMmTvSa = (TextView) itemView.findViewById(R.id.sMtvSa);
+            sMmTvSu = (TextView) itemView.findViewById(R.id.sMtvSu);
+
+
             TextView[] daysTextViews = new TextView[]{
-                mTvMo,mTvTu, mTvWe, mTvTh, mTvFr, mTvSa, mTvSu};
+                mTvMo, mTvTu, mTvWe, mTvTh, mTvFr, mTvSa, mTvSu};
+
+            TextView[] sMdaysTextViews = new TextView[]{
+                    sMmTvMo, sMmTvTu, sMmTvWe, sMmTvTh, sMmTvFr, sMmTvSa, sMmTvSu};
+
 
             initDaysWithTitles(mActivity.getResources().getStringArray(R.array.daysArray), daysTextViews);
+            initDaysWithTitles(mActivity.getResources().getStringArray(R.array.daysArray), sMdaysTextViews);
         }
 
         /**

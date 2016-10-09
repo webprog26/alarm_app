@@ -1,53 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/sMtvMo"
         android:textColor="@color/colorPrimaryDark"
-        android:textAppearance="?android:attr/textAppearanceListItem"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_marginRight="@dimen/alarm_item_view_horizontal_margin"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/sMtvTu"
         android:textColor="@color/colorPrimaryDark"
-        android:textAppearance="?android:attr/textAppearanceListItem"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_marginRight="@dimen/alarm_item_view_horizontal_margin"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/sMtvWe"
         android:textColor="@color/colorPrimaryDark"
-        android:textAppearance="?android:attr/textAppearanceListItem"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_marginRight="@dimen/alarm_item_view_horizontal_margin"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/sMtvTh"
         android:textColor="@color/colorPrimaryDark"
-        android:textAppearance="?android:attr/textAppearanceListItem"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_marginRight="@dimen/alarm_item_view_horizontal_margin"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/sMtvFr"
         android:textColor="@color/colorPrimaryDark"
-        android:textAppearance="?android:attr/textAppearanceListItem"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_marginRight="@dimen/alarm_item_view_horizontal_margin"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/sMtvSa"
         android:textColor="@color/colorPrimaryDark"
-        android:textAppearance="?android:attr/textAppearanceListItem"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_marginRight="@dimen/alarm_item_view_horizontal_margin"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/sMtvSu"
         android:textColor="@color/colorPrimaryDark"
-        android:textAppearance="?android:attr/textAppearanceListItem"/>
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
 </LinearLayout>
